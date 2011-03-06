@@ -18,7 +18,7 @@ public:
   
   engine(int, short*, float);
   move_t move(move_t);
-  bool gameEnded();
+  bool gameEnded() const;
 
 private:
   bool endGame;
@@ -27,11 +27,15 @@ private:
   int nrPiles;
   float mistakeChance; /*0 = no chance of a mistake, 1 = always make random move*/
   
-  int checkMove(move_t);
+  move_t detOptMove() const;
   void makeMove(move_t);
-  short calculateNimSum();
-  move_t detOptMove();
-  bool allOnes();
+  
+  move_t detRandomMove() const;
+  int checkMove(move_t) const;
+  short calculateNimSum() const;
+  bool allOnes() const;
+  bool isRandomMove() const;
+  int rool(int, int) const;
 };
 
 
