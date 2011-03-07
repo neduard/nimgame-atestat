@@ -14,7 +14,7 @@ int main()
   short nr;
   engine Bud(3, 0, 0.8);
   
-  while ( !Bud.gameEnded() ) {
+  while ( !Bud.is_ended() ) {
     printf("Your move is (pile, stones): "); scanf("%d", &pile);
     
     switch (pile) {

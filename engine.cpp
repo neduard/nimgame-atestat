@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-engine::engine(const int nr_rows, short int* p, const float mistake)
+engine::engine(const int nr_rows, short int* p, const float mistake) : nullMove((move_t){0, 0})
 {
   nrPiles = nr_rows, mistakeChance = mistake;
   //srand(time());  
@@ -18,63 +18,92 @@ engine::engine(const int nr_rows, short int* p, const float mistake)
   }
   
   nimSum = calculateNimSum();
-  endGame = allOnes();
+  if (nimSum) gameStates.set(GS_winning);
+  endGame = detAllOnes();
+  gameStates.set(GS_misere);
 }
 
-bool engine::allOnes() const
+bool engine::detAllOnes()
 {
-  for (int i = 0; i != nrPiles; ++i) if (pile[i] > 1) return false;
+  if (!gameStates[GS_allOne])
+    for (int i = 0; i != nrPiles; ++i) 
+      if (pile[i] > 1) return false;
+  gameStates.set(GS_allOne);
   return true;
 }
 
-bool engine::gameEnded() const
+bool engine::is_ended() const
 {
-  int i;
-  for (i = 0; !pile[i] && i != nrPiles; ++i);
-  return i == nrPiles;
+  return gameStates[GS_gameEnded];
 }
 
+bool engine::detEnded()
+{
+  if ( !gameStates[GS_gameEnded] ) {
+    int i;
+    for (i = 0; !pile[i] && i != nrPiles; ++i);
+    return gameStates[GS_gameEnded] = (i == nrPiles);
+  }
+}
 
-short int engine::calculateNimSum() const
+short int engine::calculateNimSum()
 {
   short sum = pile[0];
   for (int i = 1; i != nrPiles; sum ^= pile[i++]);
+  if (sum) gameStates.set(GS_winning);
   return sum;
 }
 
 engine::move_t engine::move(move_t pm)
 {
-  int chm = checkMove(pm);
-  if ( chm > 1 ) return (move_t){-2,0};
-  else if ( !chm ) makeMove(pm);
+  if (gameStates[GS_gameEnded]) {           // game already ended
+    gameStates.set(GS_error);
+    gameStates.set(GS_GEE);
+    return nullMove;
+  }
   
-  if ( gameEnded() ) return (move_t){-1, 0};
+  if ( !gameStates[GS_force] ) { // make player's move
+    gameStates.reset(GS_force);
+    if ( checkMove(pm) )
+      return nullMove;
+    else {
+      makeMove(pm);
+      if ( gameStates[GS_gameEnded] ) return nullMove;
+    }
+  }
   
   move_t aiMove;
-  if ( isRandomMove() ) aiMove = detRandomMove();
-  else aiMove = detOptMove();
+  if ( isRandomMove() ) {
+    gameStates.set(GS_random);
+    cout << "random!";
+    aiMove = findRandomMove();
+  }
+  else aiMove = findOptMove();
   makeMove(aiMove);
   return aiMove;
 }
 
-int engine::checkMove(move_t m) const
+int engine::checkMove(move_t m)
 {
-  if (m.pile == -1 && !m.nrTaken) return 1; // signal that the ai should do the first move
-  
-  if (m.pile > nrPiles || m.pile < 0) return 2;      // no such pile
-  else if (m.nrTaken > pile[m.pile]) return 3;       // over-taking from a single pile
-  else if (!m.nrTaken) return 4;                     // taking a null value
-  else return 0;
+  gameStates.set(GS_error);
+  if (m.pile > nrPiles || m.pile < 0) gameStates.set(GS_IPN);      // no such pile
+  else if (m.nrTaken > pile[m.pile])  gameStates.set(GS_INS);      // over-taking from a single pile
+  else if (!m.nrTaken) gameStates.set(GS_NST);                     // taking a null value
+  else {
+    gameStates.reset(GS_error);
+    return false;
+  }
+  return true;
 }
 
 void engine::makeMove(engine::move_t m)
 {
   nimSum ^= pile[m.pile];
   nimSum ^= (pile[m.pile] -= m.nrTaken);
-  if ( !endGame ) endGame = allOnes();
+  detEnded();
 }
 
-engine::move_t engine::detOptMove() const
+engine::move_t engine::findOptMove() const
 {
   int i, k, c = 0;
   
@@ -109,9 +138,8 @@ int engine::rool(int a, int b) const
 }
 
 
-engine::move_t engine::detRandomMove() const
+engine::move_t engine::findRandomMove() const
 {
-  cout << "random!" << endl;
   int k;
   while(!pile[k = rool(0, nrPiles)]);
   return (move_t){k, rool(1, pile[k])};
