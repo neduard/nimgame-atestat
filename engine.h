@@ -18,6 +18,10 @@ public:
   engine(int, short*, float);
   move_t move(move_t);
   bool is_ended() const;
+  bool is_error() const;
+  bool winning() const;
+  bool won() const;
+  void forceNextMove();
 
 private:
   enum GS {

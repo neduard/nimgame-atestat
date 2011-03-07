@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-engine::engine(const int nr_rows, short int* p, const float mistake) : nullMove((move_t){0, 0})
+engine::engine(const int nr_rows, short int* p, const float mistake) : nullMove ( (move_t){0, 0} )
 {
   nrPiles = nr_rows, mistakeChance = mistake;
   //srand(time());  
@@ -17,8 +17,7 @@ engine::engine(const int nr_rows, short int* p, const float mistake) : nullMove(
     for (int i = 1; i != nrPiles; ++i) pile[i] = pile[i - 1] + 2;
   }
   
-  nimSum = calculateNimSum();
-  if (nimSum) gameStates.set(GS_winning);
+  gameStates[GS_winning] = (bool)(nimSum = calculateNimSum());
   endGame = detAllOnes();
   gameStates.set(GS_misere);
 }
@@ -62,15 +61,19 @@ engine::move_t engine::move(move_t pm)
     return nullMove;
   }
   
-  if ( !gameStates[GS_force] ) { // make player's move
-    gameStates.reset(GS_force);
+  if ( !gameStates[GS_force] ) { // make player's move (we aren't forced)
     if ( checkMove(pm) )
       return nullMove;
     else {
       makeMove(pm);
-      if ( gameStates[GS_gameEnded] ) return nullMove;
+      if ( gameStates[GS_gameEnded] ) {
+        gameStates.set(GS_won);  // player took last stone, we won.
+        return nullMove;
+      }
     }
   }
+  
+  gameStates.reset(GS_force);
   
   move_t aiMove;
   if ( isRandomMove() ) {
@@ -80,6 +83,10 @@ engine::move_t engine::move(move_t pm)
   }
   else aiMove = findOptMove();
   makeMove(aiMove);
+  
+  if (is_ended()) gameStates.reset(GS_won); // we took the last stone, we lost
+  else gameStates[GS_winning] = !nimSum;
+  
   return aiMove;
 }
 
@@ -151,3 +158,24 @@ bool engine::isRandomMove() const
   const int rR = 1000;
   return ((rand() % rR + 1) <= rR * mistakeChance);
 }
+
+void engine::forceNextMove()
+{
+  gameStates.set(GS_force);
+}
+
+bool engine::winning() const
+{
+  return gameStates[GS_winning];
+}
+
+bool engine::won() const
+{
+  return gameStates[GS_won];
+}
+
+bool engine::is_error() const
+{
+  return gameStates[GS_error];
+}
+
