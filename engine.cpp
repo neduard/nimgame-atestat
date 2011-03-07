@@ -178,5 +178,7 @@ bool engine::won() const
 bool engine::is_error() const
 {
   return gameStates[GS_error];
-//woofwoof}
+//woofwoof
+//you made closing paranthesis as a comment dumbass,did you even try to compile it?
+}
 
