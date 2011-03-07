@@ -177,5 +177,5 @@ bool engine::won() const
 bool engine::is_error() const
 {
   return gameStates[GS_error];
-}
+//woofwoof}
 
