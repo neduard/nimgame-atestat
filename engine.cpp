@@ -16,6 +16,7 @@ engine::engine(const int nr_rows, short int* p, const float mistake) : nullMove 
     pile[0] = 3;
     for (int i = 1; i != nrPiles; ++i) pile[i] = pile[i - 1] + 2;
   }
+  //balls
   
   gameStates[GS_winning] = (bool)(nimSum = calculateNimSum());
   endGame = detAllOnes();
