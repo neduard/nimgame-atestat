@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-engine::engine(const int nr_rows, short int* p, const float mistake) : nullMove ( (move_t){0, 0} )
+engine::engine(const int nr_rows, short int* p, const float mistake, const bool normal) : nullMove((move_t){0, 0})
 {
   nrPiles = nr_rows, mistakeChance = mistake;
   //srand(time());  
@@ -16,11 +16,12 @@ engine::engine(const int nr_rows, short int* p, const float mistake) : nullMove 
     pile[0] = 3;
     for (int i = 1; i != nrPiles; ++i) pile[i] = pile[i - 1] + 2;
   }
-  //balls
   
-  gameStates[GS_winning] = (bool)(nimSum = calculateNimSum());
-  endGame = detAllOnes();
-  gameStates.set(GS_misere);
+  if (!normal) gameStates.set(GS_misere);
+  nimSum = calculateNimSum();
+  detAllOnes();
+  detWinning();
+ 
 }
 
 bool engine::detAllOnes()
@@ -44,13 +45,13 @@ bool engine::detEnded()
     for (i = 0; !pile[i] && i != nrPiles; ++i);
     return gameStates[GS_gameEnded] = (i == nrPiles);
   }
+  else return false;
 }
 
 short int engine::calculateNimSum()
 {
   short sum = pile[0];
   for (int i = 1; i != nrPiles; sum ^= pile[i++]);
-  if (sum) gameStates.set(GS_winning);
   return sum;
 }
 
@@ -68,7 +69,7 @@ engine::move_t engine::move(move_t pm)
     else {
       makeMove(pm);
       if ( gameStates[GS_gameEnded] ) {
-        gameStates.set(GS_won);  // player took last stone, we won.
+        gameStates[GS_won] = gameStates[GS_misere];  // player took last stone
         return nullMove;
       }
     }
@@ -82,11 +83,14 @@ engine::move_t engine::move(move_t pm)
     cout << "random!";
     aiMove = findRandomMove();
   }
-  else aiMove = findOptMove();
+  else {
+    gameStates.reset(GS_random);
+    aiMove = findOptMove();
+  }
   makeMove(aiMove);
   
-  if (is_ended()) gameStates.reset(GS_won); // we took the last stone, we lost
-  else gameStates[GS_winning] = !nimSum;
+  if (is_ended()) gameStates[GS_won] = !gameStates[GS_misere]; // we took last stone
+  else detWinning();
   
   return aiMove;
 }
@@ -108,6 +112,7 @@ void engine::makeMove(engine::move_t m)
 {
   nimSum ^= pile[m.pile];
   nimSum ^= (pile[m.pile] -= m.nrTaken);
+  detAllOnes();
   detEnded();
 }
 
@@ -115,14 +120,15 @@ engine::move_t engine::findOptMove() const
 {
   int i, k, c = 0;
   
-  if (endGame) {
+  if (gameStates[GS_allOne]) {
     for (k = 0; k != nrPiles && !pile[k]; ++k);
     return (move_t){k, 1};
   }
   
   if (!nimSum) {
-    for (k = 0; k != nrPiles && !pile[k]; ++k);
-    return (move_t){k, 1};
+    return findRandomMove();
+    /*for (k = 0; k != nrPiles && !pile[k]; ++k);
+    return (move_t){k, 1};*/
   }
   
   for (i = 0; i != nrPiles; ++i) if (pile[i] > 1) {++c, k = i;}
@@ -145,7 +151,6 @@ int engine::rool(int a, int b) const
   return rand() % (b - a + 1) + a;
 }
 
-
 engine::move_t engine::findRandomMove() const
 {
   int k;
@@ -160,25 +165,19 @@ bool engine::isRandomMove() const
   return ((rand() % rR + 1) <= rR * mistakeChance);
 }
 
+void engine::detWinning()
+{ gameStates[GS_winning] = (bool)(nimSum) ^ gameStates[GS_allOne] ^ gameStates[GS_misere]; }
+
 void engine::forceNextMove()
-{
-  gameStates.set(GS_force);
-}
+{ gameStates.set(GS_force); }
 
 bool engine::winning() const
-{
-  return gameStates[GS_winning];
-}
+{ return gameStates[GS_winning]; }
 
 bool engine::won() const
-{
-  return gameStates[GS_won];
-}
+{ return gameStates[GS_won]; }
 
 bool engine::is_error() const
-{
-  return gameStates[GS_error];
-//woofwoof
-//you made closing paranthesis as a comment dumbass,did you even try to compile it?
-}
+{ return gameStates[GS_error]; }
+
 

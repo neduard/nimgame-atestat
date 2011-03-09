@@ -15,14 +15,14 @@ public:
     short nrTaken;
   };
   
-  engine(int, short*, float);
+  engine(int, short*, float, bool=false);
   move_t move(move_t);
   bool is_ended() const;
   bool is_error() const;
   bool winning() const;
   bool won() const;
   void forceNextMove();
-
+  
 private:
   enum GS {
     GS_gameEnded,
@@ -53,12 +53,14 @@ private:
   move_t findOptMove() const;
   void makeMove(move_t);
   
+  void detWinning();
   move_t findRandomMove() const;
   int checkMove(move_t);
   short calculateNimSum();
   bool detAllOnes();
   bool isRandomMove() const;
   int rool(int, int) const;
+  
 };
 
 
