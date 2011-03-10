@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <bitset>
+#include <iostream>
 using namespace std;
 
 int determineBinaryLength(int);
@@ -22,6 +23,13 @@ public:
   bool winning() const;
   bool won() const;
   void forceNextMove();
+  
+  void print_piles()
+  {
+    for (int i = 0; i != nrPiles; ++i)
+      cout << pile[i] << " ";
+    cout << endl;
+  };
   
 private:
   enum GS {

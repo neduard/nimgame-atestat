@@ -21,7 +21,6 @@ engine::engine(const int nr_rows, short int* p, const float mistake, const bool 
   nimSum = calculateNimSum();
   detAllOnes();
   detWinning();
- 
 }
 
 bool engine::detAllOnes()
@@ -98,7 +97,7 @@ engine::move_t engine::move(move_t pm)
 int engine::checkMove(move_t m)
 {
   gameStates.set(GS_error);
-  if (m.pile > nrPiles || m.pile < 0) gameStates.set(GS_IPN);      // no such pile
+  if (m.pile >= nrPiles || m.pile < 0) gameStates.set(GS_IPN);      // no such pile
   else if (m.nrTaken > pile[m.pile])  gameStates.set(GS_INS);      // over-taking from a single pile
   else if (!m.nrTaken) gameStates.set(GS_NST);                     // taking a null value
   else {
@@ -135,7 +134,7 @@ engine::move_t engine::findOptMove() const
   
   if (c == 1) {
     for (i = c = 0; i != nrPiles; ++i) if (pile[i]) ++c;
-    if (c % 2) return (move_t){k, pile[k]- 1};
+    if (c % 2 == gameStates[GS_misere]) return (move_t){k, pile[k]- 1};
     else return (move_t){k, pile[k]};
   }
   
@@ -146,6 +145,7 @@ engine::move_t engine::findOptMove() const
   return (move_t){k, pile[k] - (nimSum ^ pile[k])};
 }
 
+// returns a random integer in the interval [a, b]
 int engine::rool(int a, int b) const
 {
   return rand() % (b - a + 1) + a;
@@ -154,7 +154,7 @@ int engine::rool(int a, int b) const
 engine::move_t engine::findRandomMove() const
 {
   int k;
-  while(!pile[k = rool(0, nrPiles)]);
+  while(!pile[k = rool(0, nrPiles - 1)]);
   return (move_t){k, rool(1, pile[k])};
 }
 
@@ -166,7 +166,12 @@ bool engine::isRandomMove() const
 }
 
 void engine::detWinning()
-{ gameStates[GS_winning] = (bool)(nimSum) ^ gameStates[GS_allOne] ^ gameStates[GS_misere]; }
+{ 
+  gameStates[GS_winning] = gameStates[GS_force] ^ 
+                           ( (!nimSum & !gameStates[GS_allOne]) || 
+                             ((nimSum ^ !gameStates[GS_misere]) & gameStates[GS_allOne]) ); 
+  
+}
 
 void engine::forceNextMove()
 { gameStates.set(GS_force); }
