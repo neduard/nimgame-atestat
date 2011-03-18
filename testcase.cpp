@@ -17,7 +17,11 @@ void info(engine &x)
   } else {
     x.print_piles();
     if (x.winning()) printf("Bud has a winning strategy (you can't beat him).\n");
-    else printf("Bud doesn't have a winning strategy (you can defeat him if you're careful)\n");
+    else {
+      printf("Bud doesn't have a winning strategy (you can defeat him if you're careful)\n");
+      mv opm = x.detOptimumMove();
+      printf("He recommends taking from %d, %d stones ;)\n", opm.pile + 1, opm.nrTaken);
+    }
   }
 }
 
@@ -53,6 +57,7 @@ int main()
   short test[100], *p = test;
   read_config(nr, p, mistake, normal);
   engine Bud(nr, p, mistake, normal);
+  Bud.setDiffType(1);
   
   while ( !Bud.is_ended() ) {
     printf("Your move is (pile, stones): "); scanf("%d", &pile);

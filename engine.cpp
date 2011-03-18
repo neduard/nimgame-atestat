@@ -7,6 +7,7 @@ using namespace std;
 engine::engine(const int nr_rows, short int* p, const float mistake, const bool normal) : nullMove((move_t){0, 0})
 {
   nrPiles = nr_rows, mistakeChance = mistake;
+  initialStones = 0;
   //srand(time());  
   
   // initialize piles
@@ -16,7 +17,8 @@ engine::engine(const int nr_rows, short int* p, const float mistake, const bool 
     pile[0] = 3;
     for (int i = 1; i != nrPiles; ++i) pile[i] = pile[i - 1] + 2;
   }
-  
+  for (int i = 1; i != nrPiles; ++i) initialStones+= pile[i];
+    
   if (!normal) gameStates.set(GS_misere);
   nimSum = calculateNimSum();
   detAllOnes();
@@ -162,7 +164,22 @@ engine::move_t engine::findRandomMove() const
 bool engine::isRandomMove() const
 {
   const int rR = 1000;
-  return ((rand() % rR + 1) <= rR * mistakeChance);
+  const double DSC = 0.3;
+  double realMChance; // the real mistake chance
+  if (!gameStates[GS_scalingDiff]) realMChance = mistakeChance; // compute it normally
+  else {
+    double currentNrStones = 0;
+    for (int i = 0; i != nrPiles; ++i) currentNrStones += pile[i];
+    int q = (double)initialStones * DSC;
+    if ( currentNrStones > q) 
+      // unfortunately we don't know enough math for a well-working formula. Thus, this will do
+      realMChance = ((currentNrStones - q) / ((double)initialStones - q)) * mistakeChance;
+    else realMChance = 0;
+    
+  }
+  
+  return ((rand() % rR + 1) <= rR * realMChance);
+    
 }
 
 void engine::detWinning()
@@ -185,4 +202,16 @@ bool engine::won() const
 bool engine::is_error() const
 { return gameStates[GS_error]; }
 
+engine::move_t engine::detOptimumMove()
+{
+  if (!gameStates[GS_winning])
+    return findOptMove();
+  else
+    return findRandomMove();
+}
 
+void engine::setDiffType(int t)
+{
+  if (t) gameStates.set(GS_scalingDiff);
+  else gameStates.reset(GS_scalingDiff);
+}
