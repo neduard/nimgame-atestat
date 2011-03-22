@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <QGraphicsScene>
 #include <QtGui>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -62,6 +63,5 @@ void MainWindow::changeEvent(QEvent *e)
 
 void MainWindow::make_a_move()
 {
-    printf("make a move already....\n");
-    fflush(stdout);
+    qDebug("make a move already....");
 }

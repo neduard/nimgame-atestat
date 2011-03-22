@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <stdio.h>
+#include <QDebug>
 
 Stick::Stick(int pile, int nr)
 {
@@ -25,6 +26,5 @@ void Stick::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Stick::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    printf("You fu**ing clicked meh! I'm in pile nr. %d, stick nr. %d\n", pileNr, stoneNr);
-    fflush(stdout);
+    qDebug("You fu**ing clicked meh! I'm in pile nr. %d, stick nr. %d", pileNr, stoneNr);
 }
