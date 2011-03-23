@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include "gamecontroller.h"
 
 namespace Ui {
     class MainWindow;
@@ -21,9 +22,7 @@ private:
 
     QGraphicsScene *scene;
     Ui::MainWindow *ui;
-
-private slots:
-    void make_a_move();
+    GameController *gc;
 };
 
 #endif // MAINWINDOW_H

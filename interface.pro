@@ -1,6 +1,10 @@
 SOURCES += main.cpp \
     mainwindow.cpp \
-    stick.cpp
+    stick.cpp \
+    ../engine.cpp \
+    gamecontroller.cpp
 FORMS += mainwindow.ui
 HEADERS += mainwindow.h \
-    stick.h
+    stick.h \
+    ../engine.h \
+    gamecontroller.h

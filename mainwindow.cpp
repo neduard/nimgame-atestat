@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "stick.h"
+#include "gamecontroller.h"
 
 #include <stdio.h>
 #include <QGraphicsScene>
@@ -13,28 +14,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
-    connect(ui->mkMoveBtn, SIGNAL(clicked(bool)), this, SLOT(make_a_move()));
+
 
     scene = new QGraphicsScene;
 
     scene->setSceneRect(-50, -50, 100, 100);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
-    /**
-      HAIR WE ADDZ TEH STICKZORS
-      THOU SHALT ADDEH MOAR FOR
-      GREAT LULZ
-      **/
+    gc = new GameController;
 
-    // on a more serious note, we shouldn't add them here,
-    // but rather in a separate class or smthing
-    Stick *st = new Stick(1,1);
-    st->setPos(0,0);
-    scene->addItem(st);
-
-    QTimer *timer = new QTimer;
-    QObject::connect(timer, SIGNAL(timeout()), scene, SLOT(advance() ));
-    timer->start(1000 / 33);
+    connect(ui->mkMoveBtn, SIGNAL(clicked(bool)), gc, SLOT(make_move()));
 
     ui->gameView->setScene(scene);
     ui->gameView->setCacheMode(QGraphicsView::CacheBackground);
@@ -61,7 +50,3 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::make_a_move()
-{
-    qDebug("make a move already....");
-}
