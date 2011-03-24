@@ -1,14 +1,18 @@
 #include "stick.h"
 
+#include <QGraphicsObject>
+#include <QGraphicsItem>
 #include <QPainter>
 #include <QStyleOption>
 #include <stdio.h>
 #include <QDebug>
+#include <QObject>
 
-Stick::Stick(int pile, int nr)
+Stick::Stick(QGraphicsItem *parent, int pile, int stone) : QGraphicsObject(parent)
 {
+    setAcceptsHoverEvents(true);
     pileNr = pile;
-    stoneNr = nr;
+    stoneNr = stone;
 }
 
 QRectF Stick::boundingRect() const
@@ -20,11 +24,22 @@ QRectF Stick::boundingRect() const
 
 void Stick::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    painter->setBrush(Qt::cyan);
+    option; widget;
+    painter->setBrush(color);
     painter->drawRect(-2,-25,4,50);
 }
 
 void Stick::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug("You fu**ing clicked meh! I'm in pile nr. %d, stick nr. %d", pileNr, stoneNr);
+}
+
+void Stick::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    emit hovered(pileNr, stoneNr);
+}
+
+void Stick::setColor(QColor c)
+{
+    color = c;
 }

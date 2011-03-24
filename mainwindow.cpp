@@ -18,10 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     scene = new QGraphicsScene;
 
-    scene->setSceneRect(-50, -50, 100, 100);
+    scene->setSceneRect(0, 0, 100, 150);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
-    gc = new GameController;
+    gc = new GameController(this, scene);
 
     connect(ui->mkMoveBtn, SIGNAL(clicked(bool)), gc, SLOT(make_move()));
 
