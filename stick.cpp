@@ -32,11 +32,17 @@ void Stick::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 void Stick::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug("You fu**ing clicked meh! I'm in pile nr. %d, stick nr. %d", pileNr, stoneNr);
+    emit clicked(pileNr, stoneNr);
 }
 
 void Stick::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    emit hovered(pileNr, stoneNr);
+    emit hovered(pileNr, stoneNr, true);
+}
+
+void Stick::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    emit hovered(pileNr, stoneNr, false);
 }
 
 void Stick::setColor(QColor c)

@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     gc = new GameController(this, scene);
 
-    connect(ui->mkMoveBtn, SIGNAL(clicked(bool)), gc, SLOT(make_move()));
+    connect(ui->rstBtn, SIGNAL(clicked(bool)), gc, SLOT(reset_game()));
 
     ui->gameView->setScene(scene);
     ui->gameView->setCacheMode(QGraphicsView::CacheBackground);

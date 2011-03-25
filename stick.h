@@ -15,13 +15,15 @@ public:
     void setColor(QColor);
 
 signals:
-    void hovered(int, int);
+    void hovered(int, int, bool);
+    void clicked(int, int);
 
 private:
     QColor color;
     int pileNr, stoneNr;
-    void mousePressEvent(QGraphicsSceneMouseEvent *);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 };
 
 #endif // STICK_H
