@@ -10,6 +10,7 @@
 
 Stick::Stick(QGraphicsItem *parent, int pile, int stone) : QGraphicsObject(parent)
 {
+    width = 5; height = 20;
     setAcceptsHoverEvents(true);
     pileNr = pile;
     stoneNr = stone;
@@ -19,14 +20,13 @@ QRectF Stick::boundingRect() const
 {
     qreal adjust = 1;
     return QRectF(-2 - adjust, -25 - adjust,
-                  4 + adjust, 50 + adjust);
+                  width + adjust, height + adjust);
 }
 
 void Stick::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    option; widget;
     painter->setBrush(color);
-    painter->drawRect(-2,-25,4,50);
+    painter->drawRect(-2,-25,width,height);
 }
 
 void Stick::mousePressEvent(QGraphicsSceneMouseEvent *event)

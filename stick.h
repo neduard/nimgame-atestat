@@ -21,6 +21,7 @@ signals:
 private:
     QColor color;
     int pileNr, stoneNr;
+    int height, width;
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);

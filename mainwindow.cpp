@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     scene->setSceneRect(0, 0, 100, 150);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
-    gc = new GameController(this, scene);
+    gc = new GameController(this, scene, ui->winning, ui->spinBox);
 
     connect(ui->rstBtn, SIGNAL(clicked(bool)), gc, SLOT(reset_game()));
 
