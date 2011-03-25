@@ -5,15 +5,15 @@
 #include <iostream>
 using namespace std;
 
-int determineBinaryLength(int);
-
 class engine
 {
   
 public:
-  struct move_t {
+  class move_t { /// do we really need a move_t *CLASS* ?
+  public:
     int pile;
     short nrTaken;
+    move_t(int = 0, int = 0);
   };
   
   engine(int, short*, float, bool=false);
@@ -21,10 +21,11 @@ public:
   move_t detOptimumMove();
   bool is_ended() const;
   bool is_error() const;
-  bool winning() const;
-  bool won() const;
+  bool winning() const; // deprecated
+  bool won() const;     // deprecated
+  bool win() const;     // use this instead!
   void forceNextMove();
-  void setDiffType(int=0);
+  void setDiffType(int = 0); // set the dificulty type (scaling, or constant)
   
   void print_piles()
   {
@@ -35,14 +36,8 @@ public:
   
 private:
   enum GS {
-    GS_gameEnded,
     GS_winning,
     GS_won,
-    GS_random,
-    GS_allOne,
-    GS_misere,
-    GS_force,
-    GS_scalingDiff,
     GS_error,
     GS_IPN,
     GS_INS,
@@ -50,15 +45,25 @@ private:
     GS_GEE
   };
   
-  const move_t nullMove;
+  bool gs_gameEnded,
+       gs_win,
+       gs_random,
+       gs_allOne,
+       gs_misere,
+       gs_force,
+       gs_scalingDifficulty,
+       gs_error;
+       
+  
+  const move_t nullMove; /// THIS SHOULD BE A CONST
   
   bitset<16> gameStates;
-  bool endGame;
+
   short *pile, nimSum;
-  int   nsLength; /*bitwise length of the nim sum*/
+  int   nsLength; // bitwise length of the nim sum
   int nrPiles;
-  float mistakeChance; /*0 = no chance of a mistake, 1 = always make random move*/
-  int initialStones;
+  float mistakeChance; // 0 = no chance of a mistake, 1 = always make random move
+  int initNrStones;   // used in difficulty scaling
   
   bool detEnded();
   
@@ -71,7 +76,7 @@ private:
   short calculateNimSum();
   bool detAllOnes();
   bool isRandomMove() const;
-  int rool(int, int) const;
+  int roll(int, int) const;
   
 };
 
