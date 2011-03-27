@@ -9,28 +9,9 @@
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
-
-    ui->setupUi(this);
-
-
-    scene = new QGraphicsScene;
-
-    scene->setSceneRect(0, 0, 100, 150);
-    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-
-    gc = new GameController(this, scene, ui->winning, ui->spinBox);
-
-    connect(ui->rstBtn, SIGNAL(clicked(bool)), gc, SLOT(reset_game()));
-
-    ui->gameView->setScene(scene);
-    ui->gameView->setCacheMode(QGraphicsView::CacheBackground);
-    ui->gameView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    ui->gameView->setDragMode(QGraphicsView::NoDrag);
-    //ui->gameView->resize(550, 550);
-    ui->gameView->show();
+    gc = new GameController(this, this, ui = new Ui::MainWindow);
 }
 
 MainWindow::~MainWindow()

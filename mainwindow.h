@@ -19,8 +19,6 @@ protected:
     void changeEvent(QEvent *e);
 
 private:
-
-    QGraphicsScene *scene;
     Ui::MainWindow *ui;
     GameController *gc;
 };

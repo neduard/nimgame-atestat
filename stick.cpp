@@ -31,7 +31,6 @@ void Stick::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Stick::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug("You fu**ing clicked meh! I'm in pile nr. %d, stick nr. %d", pileNr, stoneNr);
     emit clicked(pileNr, stoneNr);
 }
 
