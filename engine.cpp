@@ -65,6 +65,11 @@ short int engine::calculateNimSum()
   return sum;
 }
 
+engine::move_t engine::move(int pile, int nr)
+{
+    return move(move_t(pile, nr));
+}
+
 engine::move_t engine::move(move_t pm)
 {
   if ( gs_gameEnded ) {           // game already ended

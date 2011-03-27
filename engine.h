@@ -16,7 +16,8 @@ public:
     move_t(int = 0, int = 0);
   };
   
-  engine(int, short*, float, bool=false);
+  engine(int, short*, float=0, bool=false);
+  move_t move(int, int);
   move_t move(move_t);
   move_t detOptimumMove();
   bool is_ended() const;
