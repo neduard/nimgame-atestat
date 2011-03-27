@@ -27,6 +27,7 @@ private:
 public slots:
     void make_move(int, int);
     void reset_game();
+    void show_optimum_move();
 };
 
 #endif // GAMECONTROLLER_H

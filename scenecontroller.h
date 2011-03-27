@@ -9,8 +9,10 @@ class SceneController : public QGraphicsScene
 {
     Q_OBJECT
     QVector<Stick*> sticks[10];
+    const int sceneWidth, sceneHeight;
 
     void initializeGame(QVector<int>);
+
 
 public:
     explicit SceneController(QObject*, QVector<int>);

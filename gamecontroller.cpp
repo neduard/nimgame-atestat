@@ -1,6 +1,7 @@
 #include "gamecontroller.h"
 
 #include <QDebug>
+#include <QMessageBox>
 #include <assert.h>
 
 
@@ -23,10 +24,10 @@ GameController::GameController(QObject *p, QMainWindow* w, Ui::MainWindow* u) :
     ui->gameView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     ui->gameView->setDragMode(QGraphicsView::NoDrag);
 
-    //ui->gameView->resize(550, 550);
 
-    connect(ui->rstBtn, SIGNAL(clicked(bool)), this, SLOT(reset_game()));
-    connect(scene, SIGNAL(make_move(int,int)), this, SLOT(make_move(int,int)));
+    connect(ui->anlzBtn, SIGNAL(clicked()),          this, SLOT(show_optimum_move()));
+    connect(ui->rstBtn,  SIGNAL(clicked(bool)),      this, SLOT(reset_game()));
+    connect(scene,       SIGNAL(make_move(int,int)), this, SLOT(make_move(int,int)));
 
     ui->gameView->show();
 }
@@ -38,6 +39,14 @@ void GameController::make_move(int pile, int nr)
     assert(pm.nrTaken || pal->is_ended());
     scene->deleteFromPile(pm.pile, pm.nrTaken);
     ui->winning->setChecked(!pal->win());
+
+    if (pal->is_ended()) {
+        QMessageBox mb;
+        if (pal->win()) mb.setText("meh... the computer won :/");
+        else mb.setText("Congrats! You won... free internets");
+        mb.exec();
+        reset_game();
+    }
 }
 
 void GameController::reset_game()
@@ -49,4 +58,17 @@ void GameController::reset_game()
     pal = new engine(ui->spinBox->value(), 0);
     scene->resetGame(aux);
     ui->winning->setChecked(!pal->win());
+}
+
+void GameController::show_optimum_move()
+{
+    QMessageBox mb;
+    if (!pal->win()) {
+        char buff[30];
+        engine::move_t m = pal->detOptimumMove();
+        sprintf(buff, "take from pile %d, %d sticks\n", m.pile + 1, m.nrTaken);
+        mb.setText(buff);
+    }
+    else mb.setText("sorry, you can't win :/");
+    mb.exec();
 }

@@ -1,9 +1,9 @@
 #include "scenecontroller.h"
 
 SceneController::SceneController(QObject *parent, QVector<int> nrInPile) :
-    QGraphicsScene(parent)
+    QGraphicsScene(parent), sceneWidth(251), sceneHeight(231)
 {
-    setSceneRect(0, 0, 100, 150);
+    setSceneRect(0, 0, sceneWidth, sceneHeight);
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
     initializeGame(nrInPile);
@@ -11,19 +11,22 @@ SceneController::SceneController(QObject *parent, QVector<int> nrInPile) :
 
 void SceneController::initializeGame(QVector<int> nrInPile)
 {
+    int pm = 4;
+    int allPileHeight = (20 + pm) * nrInPile.size() + pm;
+
     for (int p = 0; p != nrInPile.size(); ++p) {
         for (int s = 0; s != nrInPile[p]; ++s) {
             Stick *stk = new Stick(0, p, s);
             sticks[p].append(stk);
 
-            stk->setPos(s * 10, p * 30);
+            stk->setPos(s * 10, (sceneHeight - allPileHeight) / 2 + pm + (pm + 20) * p);
             stk->setColor(QColor(rand() % 255, rand() % 255, rand() % 255 ));
 
             connect(stk,  SIGNAL( hovered(int, int, bool) ),
                     this, SLOT  ( stick_selected(int, int, bool) ) );
 
-            connect(stk,    SIGNAL(clicked(int, int)),
-                    this,   SLOT(stick_clicked(int, int)));
+            connect(stk,    SIGNAL( clicked(int, int) ),
+                    this,   SLOT  ( stick_clicked(int, int) ) );
 
             addItem(stk);
         }
@@ -47,7 +50,6 @@ void SceneController::deleteFromPile(int pile, int nr)
         delete sticks[pile][i];
         sticks[pile].pop_back();
     }
-    //sticks[pile].erase(sticks[pile].end() - nr, sticks[pile].end());
 }
 
 void SceneController::stick_clicked(int pile, int stickNr)
