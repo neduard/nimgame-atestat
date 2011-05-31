@@ -1,7 +1,7 @@
 #ifndef GAMECONTROLLER_H
 #define GAMECONTROLLER_H
 
-#include "../engine.h"
+#include "../engine/engine.h"
 #include "stick.h"
 #include "scenecontroller.h"
 #include "ui_mainwindow.h"
@@ -28,6 +28,7 @@ public slots:
     void make_move(int, int);
     void reset_game();
     void show_optimum_move();
+    void about_game();
 };
 
 #endif // GAMECONTROLLER_H

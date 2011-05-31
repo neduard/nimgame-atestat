@@ -11,17 +11,23 @@ SceneController::SceneController(QObject *parent, QVector<int> nrInPile) :
 
 void SceneController::initializeGame(QVector<int> nrInPile)
 {
-    int pm = 4;
+    int pm = 4,aa,bb,cc;
     int allPileHeight = (20 + pm) * nrInPile.size() + pm;
-
+    int nrCurPile = 3,cntCurPile = 3;
     for (int p = 0; p != nrInPile.size(); ++p) {
+        aa = rand() % 255;
+        bb = rand() % 255;
+        cc = rand() % 255;
         for (int s = 0; s != nrInPile[p]; ++s) {
             Stick *stk = new Stick(0, p, s);
             sticks[p].append(stk);
-
-            stk->setPos(s * 10, (sceneHeight - allPileHeight) / 2 + pm + (pm + 20) * p);
-            stk->setColor(QColor(rand() % 255, rand() % 255, rand() % 255 ));
-
+            if ( !cntCurPile )
+                {nrCurPile += 2 ;
+                 cntCurPile = nrCurPile;
+                }
+            stk->setPos(sceneWidth/2 - nrCurPile*5 + s * 10 , (sceneHeight - allPileHeight) / 2 + pm + (pm + 20) * p);
+            stk->setColor(QColor(aa, bb, cc));
+            cntCurPile--;
             connect(stk,  SIGNAL( hovered(int, int, bool) ),
                     this, SLOT  ( stick_selected(int, int, bool) ) );
 
@@ -46,6 +52,7 @@ void SceneController::stick_selected(int pile, int nr, bool selected)
 void SceneController::deleteFromPile(int pile, int nr)
 {
     int orig = sticks[pile].size() - nr;
+    assert(orig >= 0);
     for ( int i = sticks[pile].size() - 1; i >= orig; --i ) {
         delete sticks[pile][i];
         sticks[pile].pop_back();

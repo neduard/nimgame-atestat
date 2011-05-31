@@ -2,6 +2,7 @@
 #define SCENECONTROLLER_H
 
 #include "stick.h"
+#include <assert.h>
 #include <QGraphicsScene>
 
 

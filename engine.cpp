@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <assert.h>
+#include <stdio.h>
 using namespace std;
 
 engine::move_t::move_t(int a, int b)
@@ -95,8 +96,9 @@ engine::move_t engine::move(move_t pm)
   move_t aiMove;
   if ( isRandomMove() ) {
     gs_random = true;
-    cout << "random!";  /// DEBUG code
     aiMove = findRandomMove();
+    printf("rnd mv: (%d, %d)\n", aiMove.pile, aiMove.nrTaken);
+    fflush(stdout);
   } 
   else {
     gs_random = false;
