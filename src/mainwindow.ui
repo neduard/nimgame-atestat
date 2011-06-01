@@ -116,7 +116,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="rowsSpnBx">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -148,7 +148,7 @@
      <string>About</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_2">
+   <widget class="QSpinBox" name="diffSpnBx">
     <property name="geometry">
      <rect>
       <x>300</x>

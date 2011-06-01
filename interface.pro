@@ -1,12 +1,12 @@
-SOURCES += main.cpp \
-    mainwindow.cpp \
-    stick.cpp \
-    ../engine.cpp \
-    gamecontroller.cpp \
-    scenecontroller.cpp
-FORMS += mainwindow.ui
-HEADERS += mainwindow.h \
-    stick.h \
-    ../engine.h \
-    gamecontroller.h \
-    scenecontroller.h
+SOURCES += src/main.cpp \
+    src/mainwindow.cpp \
+    src/stick.cpp \
+    src/engine.cpp \
+    src/gamecontroller.cpp \
+    src/scenecontroller.cpp
+FORMS += src/mainwindow.ui
+HEADERS += src/mainwindow.h \
+    src/stick.h \
+    src/engine.h \
+    src/gamecontroller.h \
+    src/scenecontroller.h

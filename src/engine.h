@@ -1,8 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <bitset>
-#include <iostream>
+#include <vector>
 using namespace std;
 
 class engine
@@ -13,39 +12,18 @@ public:
   public:
     int pile;
     short nrTaken;
-    move_t(int = 0, int = 0);
+    move_t(int = 0, short = 0);
   };
   
-  engine(int, short*, float=0, bool=false);
-  move_t move(int, int);
+  engine(vector<short>&, double=0.0, bool=false);
   move_t move(move_t);
   move_t detOptimumMove();
   bool is_ended() const;
-  bool is_error() const;
-  bool winning() const; // deprecated
-  bool won() const;     // deprecated
-  bool win() const;     // use this instead!
-  void forceNextMove();
+  bool is_error() const;    /// FIXME: rewrite error API
+  bool win() const;
   void setDiffType(int = 0); // set the dificulty type (scaling, or constant)
-  
-  void print_piles()
-  {
-    for (int i = 0; i != nrPiles; ++i)
-      cout << pile[i] << " ";
-    cout << endl;
-  };
-  
+
 private:
-  enum GS {
-    GS_winning,
-    GS_won,
-    GS_error,
-    GS_IPN,
-    GS_INS,
-    GS_NST,
-    GS_GEE
-  };
-  
   bool gs_gameEnded,
        gs_win,
        gs_random,
@@ -58,12 +36,11 @@ private:
   
   const move_t nullMove; /// THIS SHOULD BE A CONST
   
-  bitset<16> gameStates;
-
-  short *pile, nimSum;
+  short nimSum;
+  vector<short> pile;
   int   nsLength; // bitwise length of the nim sum
   int nrPiles;
-  float mistakeChance; // 0 = no chance of a mistake, 1 = always make random move
+  double mistakeChance; // 0 = no chance of a mistake, 1 = always make random move
   int initNrStones;   // used in difficulty scaling
   
   bool detEnded();
@@ -77,8 +54,6 @@ private:
   short calculateNimSum();
   bool detAllOnes();
   bool isRandomMove() const;
-  int roll(int, int) const;
-  
 };
 
 

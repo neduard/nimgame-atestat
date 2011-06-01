@@ -3,6 +3,7 @@
 
 #include "stick.h"
 #include <assert.h>
+#include <vector>
 #include <QGraphicsScene>
 
 
@@ -12,13 +13,10 @@ class SceneController : public QGraphicsScene
     QVector<Stick*> sticks[10];
     const int sceneWidth, sceneHeight;
 
-    void initializeGame(QVector<int>);
-
-
 public:
-    explicit SceneController(QObject*, QVector<int>);
+    explicit SceneController(QObject*);
     void deleteFromPile(int, int);
-    void resetGame(QVector<int>);
+    void initializeGame(std::vector<short>);
 
 signals:
     void make_move(int, int);

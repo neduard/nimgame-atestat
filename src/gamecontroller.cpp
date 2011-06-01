@@ -2,24 +2,15 @@
 
 #include <QDebug>
 #include <QMessageBox>
+#include <vector>
 #include <assert.h>
 
 
 GameController::GameController(QObject *p, QMainWindow* w, Ui::MainWindow* u) :
-    QObject(p), ui(u)
+    QObject(p), ui(u), pal(0)
 {
-    QVector<int> initStones;
-    short initStones2[] = {3, 5, 7};
-    initStones << 3 << 5 << 7;
     ui->setupUi(w);
-
-
-    scene = new SceneController(this, initStones);
-    pal = new engine(3, initStones2, (5.0 - ui->spinBox_2->value()) / 5.0);
-
-
-
-    ui->winning->setChecked(!pal->win());
+    scene = new SceneController(this);
 
     ui->gameView->setScene(scene);
     ui->gameView->setCacheMode(QGraphicsView::CacheBackground);
@@ -28,17 +19,18 @@ GameController::GameController(QObject *p, QMainWindow* w, Ui::MainWindow* u) :
 
 
     connect(ui->anlzBtn, SIGNAL(clicked()),          this, SLOT(show_optimum_move()));
-    connect(ui->rstBtn,  SIGNAL(clicked(bool)),      this, SLOT(reset_game()));
+    connect(ui->rstBtn,  SIGNAL(clicked(bool)),      this, SLOT(new_game()));
     connect(scene,       SIGNAL(make_move(int,int)), this, SLOT(make_move(int,int)));
     connect(ui->aboutBtn, SIGNAL(clicked()),          this, SLOT(about_game()));
 
+    new_game();
     ui->gameView->show();
 }
 
 void GameController::make_move(int pile, int nr)
 {
 
-    mv pm = pal->move(pile, nr);
+    mv pm = pal->move(engine::move_t(pile, nr));
     assert(pm.nrTaken || pal->is_ended());
     scene->deleteFromPile(pm.pile, pm.nrTaken);
     ui->winning->setChecked(!pal->win());
@@ -48,18 +40,19 @@ void GameController::make_move(int pile, int nr)
         if (pal->win()) mb.setText("The Game! You lost it!");
         else mb.setText("Congrats! You won the game!");
         mb.exec();
-        reset_game();
+        new_game();
     }
 }
 
-void GameController::reset_game()
+void GameController::new_game()
 {
-    QVector<int> aux;
-    for (int i = 1; i <= ui->spinBox->value(); ++i)
-        aux.append(i * 2 + 1);
-    delete pal;
-    pal = new engine(ui->spinBox->value(), 0, (5.0 - ui->spinBox_2->value()) / 5.0);
-    scene->resetGame(aux);
+    std::vector<short> aux;
+    if (pal) delete pal;
+
+    for (short i = 1; i <= ui->rowsSpnBx->value(); ++i)
+        aux.push_back(i * 2 + 1);
+    pal = new engine(aux, (5.0 - ui->diffSpnBx->value()) / 5.0);
+    scene->initializeGame(aux);
     ui->winning->setChecked(!pal->win());
 }
 
@@ -80,7 +73,7 @@ void GameController::about_game()
 {
    QMessageBox mb;
 
-   mb.setText("Made by: \n    Eduard Nicodei  \n    Marius Dumitrescu    \n \n Vers 1.0 \n");
+   mb.setText("Back in the prototype phase.\nOwner eddzor");
 
    mb.exec();
 
