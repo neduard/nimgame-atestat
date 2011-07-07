@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
+    <width>384</width>
     <height>300</height>
    </rect>
   </property>
@@ -53,32 +53,6 @@
      </rectf>
     </property>
    </widget>
-   <widget class="QPushButton" name="rstBtn">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>10</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>New Game</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="anlzBtn">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>90</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Hint</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="winning">
     <property name="enabled">
      <bool>false</bool>
@@ -98,19 +72,6 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="aboutBtn">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>50</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>About</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -118,7 +79,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>418</width>
+     <width>384</width>
      <height>23</height>
     </rect>
    </property>
@@ -133,6 +94,8 @@
      <string>Help</string>
     </property>
     <addaction name="actionHint"/>
+    <addaction name="actionForce"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuGame"/>
@@ -151,6 +114,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionForce">
+   <property name="text">
+    <string>Force move</string>
    </property>
   </action>
  </widget>

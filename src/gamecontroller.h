@@ -26,9 +26,11 @@ private:
     engine *pal;
     SceneController *scene;
     newGameValues ngv;
+    void winningHandler();
 
 public slots:
     void make_move(int, int);
+    void force_move();
     void new_game(bool = true);
     void show_optimum_move();
     void about_game();

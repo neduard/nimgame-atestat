@@ -19,7 +19,6 @@ public:
   move_t move(move_t);
   move_t detOptimumMove();
   bool is_ended() const;
-  bool is_error() const;    /// FIXME: rewrite error API
   bool win() const;          // if the ENGINE has a winning strategy / has won
   void setDiffType(int = 0); // set the dificulty type (scaling, or constant)
 
@@ -38,7 +37,6 @@ private:
   
   short nimSum;
   vector<short> pile;
-  int   nsLength; // bitwise length of the nim sum
   int nrPiles;
   double mistakeChance; // 0 = no chance of a mistake, 1 = always make random move
   int initNrStones;   // used in difficulty scaling

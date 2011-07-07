@@ -61,19 +61,13 @@ engine::move_t engine::move(move_t pm)
 {
   if ( gs_gameEnded )           // game already ended
     return nullMove;
-  
-  if (!pm.nrTaken && !pm.pile) gs_force = true; /// FIXME: this is a workaround
 
-  if ( !gs_force ) { // make player's move (we aren't forced)
-    gs_force = false;
-    if ( checkMove(pm) )
-      return nullMove;
-    else {
-      makeMove(pm);
-      if ( gs_gameEnded ) {  
+  if ( pm.nrTaken ) { // make player's move (we aren't forced)
+    assert(checkMove(pm));
+    makeMove(pm);
+    if ( gs_gameEnded ) {
         gs_win = gs_misere;   // player took last stone
         return nullMove;
-      }
     }
   }
   
@@ -96,16 +90,10 @@ engine::move_t engine::move(move_t pm)
   return aiMove;
 }
 
-/// FIXME: rethink error reporting
 int engine::checkMove(move_t m)
 {
-  if (m.pile >= nrPiles || m.pile < 0) ;      // no such pile
-  else if (m.nrTaken > pile[m.pile]) ;      // over-taking from a single pile
-  else if (!m.nrTaken) ;                     // taking a null value
-  else {
-    return false;
-  }
-  return true;
+  if (m.pile >= nrPiles || m.pile < 0 || m.nrTaken > pile[m.pile] || (!m.nrTaken && m.pile)) return false;
+  else return true;
 }
 
 void engine::makeMove(engine::move_t m)
