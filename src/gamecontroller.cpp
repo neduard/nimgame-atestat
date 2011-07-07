@@ -1,7 +1,9 @@
 #include "gamecontroller.h"
 
+
 #include <QDebug>
 #include <QMessageBox>
+#include <QDialog>
 #include <vector>
 #include <assert.h>
 
@@ -9,7 +11,7 @@
 GameController::GameController(QObject *p, QMainWindow* w, Ui::MainWindow* u) :
     QObject(p), ui(u), pal(0)
 {
-    ui->setupUi(w);
+    ui->setupUi(mainWindow = w);
     scene = new SceneController(this);
 
     ui->gameView->setScene(scene);
@@ -20,8 +22,13 @@ GameController::GameController(QObject *p, QMainWindow* w, Ui::MainWindow* u) :
 
     connect(ui->anlzBtn, SIGNAL(clicked()),          this, SLOT(show_optimum_move()));
     connect(ui->rstBtn,  SIGNAL(clicked(bool)),      this, SLOT(new_game()));
+    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(new_game()));
     connect(scene,       SIGNAL(make_move(int,int)), this, SLOT(make_move(int,int)));
     connect(ui->aboutBtn, SIGNAL(clicked()),          this, SLOT(about_game()));
+
+    ngv.mistakeChance = 0.0;
+    ngv.normal = false;
+    ngv.nrRows = 3;
 
     new_game();
     ui->gameView->show();
@@ -40,18 +47,25 @@ void GameController::make_move(int pile, int nr)
         if (pal->win()) mb.setText("The Game! You lost it!");
         else mb.setText("Congrats! You won the game!");
         mb.exec();
-        new_game();
+        new_game(false);
     }
 }
 
-void GameController::new_game()
+void GameController::new_game(bool showDialog )
 {
-    std::vector<short> aux;
-    if (pal) delete pal;
+    if (showDialog) {
+        newGameDialog ngd(mainWindow, ngv);
+        if (!ngd.exec()) return;
+        ngv = ngd.getNewGameValues();
+    }
 
-    for (short i = 1; i <= ui->rowsSpnBx->value(); ++i)
+    if (pal) { delete pal; pal = 0; }
+
+    std::vector<short> aux;
+    for (short i = 1; i <= ngv.nrRows; ++i)
         aux.push_back(i * 2 + 1);
-    pal = new engine(aux, (5.0 - ui->diffSpnBx->value()) / 5.0);
+
+    pal = new engine(aux, ngv.mistakeChance, ngv.normal);
     scene->initializeGame(aux);
     ui->winning->setChecked(!pal->win());
 }

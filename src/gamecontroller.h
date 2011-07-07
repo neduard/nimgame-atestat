@@ -5,6 +5,7 @@
 #include "stick.h"
 #include "scenecontroller.h"
 #include "ui_mainwindow.h"
+#include "newgamedialog.h"
 
 #include <QObject>
 #include <QGraphicsScene>
@@ -21,12 +22,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QMainWindow *mainWindow;
     engine *pal;
     SceneController *scene;
+    newGameValues ngv;
 
 public slots:
     void make_move(int, int);
-    void new_game();
+    void new_game(bool = true);
     void show_optimum_move();
     void about_game();
 };

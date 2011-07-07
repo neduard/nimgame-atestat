@@ -20,7 +20,7 @@ engine::engine(vector<short>& p, double mistake,bool normal)
   gs_force = gs_scalingDifficulty = gs_error = false;
   
   nrPiles = pile.size();
-  for (int i = 1; i != nrPiles; ++i) initNrStones+= pile[i];
+  for (int i = 0; i != nrPiles; ++i) initNrStones+= pile[i];
 
   nimSum = calculateNimSum();
   detAllOnes();
@@ -41,14 +41,13 @@ bool engine::is_ended() const
   return gs_gameEnded;
 }
 
-bool engine::detEnded()
+void engine::detEnded()
 {
   if ( !gs_gameEnded ) {
     int i;
     for (i = 0; !pile[i] && i != nrPiles; ++i);
-    return gs_gameEnded = (i == nrPiles);
+    gs_gameEnded = (i == nrPiles);
   }
-  else return false;
 }
 
 short int engine::calculateNimSum()
@@ -91,7 +90,7 @@ engine::move_t engine::move(move_t pm)
   }
   makeMove(aiMove);
   
-  if (is_ended()) gs_win = !gs_misere; // we took last stone
+  if ( gs_gameEnded ) gs_win = !gs_misere; // we took last stone
   else detWinning();
   
   return aiMove;
@@ -114,7 +113,7 @@ void engine::makeMove(engine::move_t m)
   nimSum ^= pile[m.pile];
   nimSum ^= (pile[m.pile] -= m.nrTaken);
   if (pile[m.pile] == 1) detAllOnes();
-  else if (pile[m.pile] == 0) detEnded();
+  if (!pile[m.pile]) { detEnded(); detAllOnes(); }
 }
 
 engine::move_t engine::findOptMove() const
@@ -186,10 +185,15 @@ bool engine::isRandomMove() const
 }
 
 void engine::detWinning()
-{ 
-  gs_win = gs_force ^
+{
+  /*gs_win = gs_force ^
            ( (!nimSum & !gs_allOne) ||
-           ((nimSum ^ !gs_misere) && gs_allOne) );
+           ((nimSum ^ !gs_misere) && gs_allOne) );*/
+
+    if (gs_allOne)
+        gs_win = nimSum ^ !gs_misere;
+    else
+        gs_win = !nimSum;
 }
 
 engine::move_t engine::detOptimumMove()
